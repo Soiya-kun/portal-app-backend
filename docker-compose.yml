@@ -1,0 +1,11 @@
+version: '1'
+services:
+  fastapi:
+    ports:
+      - 8000:8000
+    build: ./backend
+    restart: always
+    volumes:
+      - ./backend:/backend
+    command: >
+      bash -c "uvicorn app.main:app --reload --host 0.0.0.0"
