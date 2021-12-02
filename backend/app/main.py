@@ -1,52 +1,29 @@
-from fastapi import FastAPI
-from enum import Enum
-from pydantic import BaseModel
-from typing import Optional
+from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+
+from app.domains.entities.login_token import LoginToken
+from app.drivers.security import authenticate_user, create_access_token
 
 app = FastAPI()
 
-
-class ModelName(str, Enum):
-    x = "x"
-    y = "y"
-    z = "z"
-
-
-class RestInfo(BaseModel):
-    name: str
-    date: int
-    morning: bool = False
-    afternool: bool = False
-    reason: Optional[str] = None
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 @app.get("/")
-async def root():
+async def root(token: str = Depends(oauth2_scheme)):
     return {"message": "Hello World"}
 
 
-@app.post("/")
-async def testpost():
-    return {"testpost": "testpost"}
-
-
-@app.get("/testuser")
-async def getUser():
-    return {"user_id": "testuser"}
-
-
-@app.get("/{user_id}")
-async def getAnotherUser(user_id: str, a: int = 0, b: int = 0):
-    if user_id == ModelName.x:
-        return {"user_id": "x_man", "result": a + b}
-    elif user_id == ModelName.y:
-        return {"user_id": "y_man", "result": a + b}
-    elif user_id == ModelName.z:
-        return {"user_id": "z_man", "result": a + b}
-    else:
-        return {"user_id": user_id, "result": a + b}
-
-
-@app.post("/{user_id}")
-async def postRest(restInfo: RestInfo):
-    return restInfo
+@app.post("/token", response_model=LoginToken)
+async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+    user = authenticate_user(form_data.username, form_data.password)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    access_token = create_access_token(
+        data={"sub": user.username}
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
