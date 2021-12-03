@@ -3,6 +3,12 @@
 ## 開発環境構築
 
 まずは`app/core/.env.example`の内容を参考に、環境変数を設定する。
+SECRET_KEY=IT_MUST_BE_CHANGED
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_SERVER=db
+POSTGRES_PORT=5432
+POSTGRES_DB=postgres
 
 ```shell
 # Docker Imageのビルド
