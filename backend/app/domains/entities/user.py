@@ -8,5 +8,20 @@ class UserBase(BaseModel):
     email: Optional[EmailStr] = None
 
 
+class UserCreated(UserBase):
+    password: str
+
+
 class UserInDB(UserBase):
     hashed_password: str
+
+
+class UserInDBBase(UserBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+
+class User(UserInDBBase):
+    pass
