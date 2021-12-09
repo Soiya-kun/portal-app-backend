@@ -16,6 +16,7 @@ class SQLUserRepository(repositories.IUserRepository):
 
     def create(self, obj_in: entities.UserCreated) -> entities.User:
         user = models.User(
+            username=obj_in.username,
             email=obj_in.email,
             hashed_password=get_password_hash(obj_in.password),
         )

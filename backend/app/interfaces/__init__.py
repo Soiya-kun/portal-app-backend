@@ -1,1 +1,1 @@
-from user import SQLUserRepository
+from app.interfaces.user import SQLUserRepository

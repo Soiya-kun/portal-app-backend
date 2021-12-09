@@ -1,0 +1,6 @@
+- model: user
+  fields:
+    id: 1
+    username: test_user1
+    email: a1@example.com
+    password: test_pass
